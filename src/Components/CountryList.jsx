@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Spinner from './Spinner.jsx';
 import Message from './Message.jsx';
 import Styles from './CountryList.module.css';
 import CountryItem from './CountryItem.jsx';
-export default function CountryList({ cities, isLoading }) {
+import { CitiesProvider, CitiesContext } from '../Context/CitiesContext.jsx';
+export default function CountryList() {
+    const {cities,isLoading}=useContext(CitiesContext);
     if (isLoading) return <Spinner />;
     if (!cities.length) return <Message message='Add your first city by clicking
     on the city on the map'/>;
