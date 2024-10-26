@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useReducer, useState } from "react";
+import { createContext, useContext, useEffect, useReducer, useState, useCallback } from "react";
 const Base_URL = 'http://localhost:8000';
 
 const CitiesContext = createContext();
@@ -46,17 +46,18 @@ function CitiesProvider({ children }) {
     }, []);
 
     // Called from city component to get all details about current city.
-    async function getCity(id) {
-        if (Number(id) === currentCity.id) return;
-        dispatch({ type: 'loading' });
-        try {
-            const res = await fetch(`${Base_URL}/cities/${id}`);
-            const data = await res.json();
-            dispatch({ type: 'currentCity/loaded', payload: data })
-        } catch {
-            dispatch({ type: 'rejected', payload: 'some error occured in searching the city details' });
-        }
-    };
+    const getCity = useCallback(
+        async function getCity(id) {
+            if (Number(id) === currentCity.id) return;
+            dispatch({ type: 'loading' });
+            try {
+                const res = await fetch(`${Base_URL}/cities/${id}`);
+                const data = await res.json();
+                dispatch({ type: 'currentCity/loaded', payload: data })
+            } catch {
+                dispatch({ type: 'rejected', payload: 'some error occured in searching the city details' });
+            }
+        }, [currentCity.id]);
     //Called from the form where user gives inputs and new city is created in the citylist.
     async function createCity(newCity) {
         dispatch({ type: 'loading' });
